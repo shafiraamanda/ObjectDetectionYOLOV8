@@ -26,7 +26,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --------------------- Logo Saraswanti dari GitHub ---------------------
-st.image("https://raw.githubusercontent.com/username/repo/main/Saraswanti-Logo.png", width=150, caption="Saraswanti Group")  # Ganti URL sesuai lokasi filemu
+st.image("https://github.com/shafiraamanda/ObjectDetectionYOLOV8/blob/main/Saraswanti-Logo.png", width=150, caption="Saraswanti Group")  # Ganti URL sesuai lokasi filemu
 
 # --------------------- Bar Atas: Profil & Status ---------------------
 col1, col2 = st.columns([1, 5])
