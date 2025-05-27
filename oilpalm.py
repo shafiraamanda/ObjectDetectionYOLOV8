@@ -17,10 +17,10 @@ def get_base64_image(image_path):
 
 # Fungsi untuk menampilkan logo di kiri atas
 def render_logo():
-    if not os.path.exists("Saraswanti-Logo.png"):
+    if not os.path.exists("Buah-Kelapa-Sawit.jpg"):
         st.warning("⚠️ Logo Saraswanti tidak ditemukan.")
     else:
-        logo_base64 = get_base64_image("Saraswanti-Logo.png")
+        logo_base64 = get_base64_image("Buah-Kelapa-Sawit.jpg")
         st.markdown(
             f"""
             <div style="position: fixed; top: 10px; left: 10px; z-index: 999;">
