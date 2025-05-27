@@ -25,23 +25,53 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --------------------- Bar Atas: Logo, Profil & Status ---------------------
-col1, col2 = st.columns([1, 5])
+# --------------------- Logo Saraswanti di pojok kiri atas (posisi absolute) ---------------------
+st.markdown(
+    """
+    <style>
+        .logo-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 100;
+        }
+        .profil-container {
+            position: absolute;
+            top: 150px;
+            left: 20px;
+            z-index: 100;
+        }
+    </style>
+    <div class="logo-container">
+        <img src="https://raw.githubusercontent.com/shafiraamanda/ObjectDetectionYOLOV8/main/Saraswanti-Logo.png" width="120">
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
-with col1:
-    st.image("https://raw.githubusercontent.com/shafiraamanda/ObjectDetectionYOLOV8/main/Saraswanti-Logo.png", width=120, caption="Saraswanti Group")
-    st.image("/mnt/data/74f139dd-1bff-4b06-b5d2-e1f092c7cc4d.png", width=80, caption="Profil")
-
-with col2:
-    now = datetime.now().strftime("%H:%M:%S")
+# --------------------- Gambar Profil di bawah logo ---------------------
+with st.container():
     st.markdown(
-        f"""
-        <div style='text-align: right; font-size:16px; color: lime;'>
-            🔄 <b>RUNNING...</b> &nbsp;&nbsp; 🕒 {now}
+        """
+        <div class="profil-container">
+            <img src="data:image/png;base64,""" +
+        base64.b64encode(open("/mnt/data/74f139dd-1bff-4b06-b5d2-e1f092c7cc4d.png", "rb").read()).decode() +
+        """ " width="80">
         </div>
         """,
         unsafe_allow_html=True
     )
+
+# --------------------- Status kanan atas ---------------------
+now = datetime.now().strftime("%H:%M:%S")
+st.markdown(
+    f"""
+    <div style='text-align: right; font-size:16px; color: lime;'>
+        🔄 <b>RUNNING...</b> &nbsp;&nbsp; 🕒 {now}
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 # --------------------- Load Model ---------------------
 @st.cache_resource
