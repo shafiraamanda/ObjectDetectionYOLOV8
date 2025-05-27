@@ -1,30 +1,6 @@
 import streamlit as st
 import base64
-
-# Fungsi untuk encode gambar lokal ke base64
-def get_base64_image(image_path):
-    with open(image_path, "rb") as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
-
-# Set halaman
-st.set_page_config(page_title="Deteksi Buah Sawit", layout="centered")
-
-# Load dan encode logo lokal
-logo_base64 = get_base64_image("Saraswanti-Logo.png")
-
-# Tampilkan logo di kiri atas
-st.markdown(
-    f"""
-    <div style="position: fixed; top: 10px; left: 10px; z-index: 999;">
-        <img src="data:image/png;base64,{logo_base64}" alt="Logo Saraswanti" width="120" />
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-# --- Berikut kode utama aplikasi kamu ---
-
+import os
 import cv2
 import numpy as np
 from PIL import Image
@@ -33,15 +9,45 @@ from io import BytesIO
 from ultralytics import YOLO
 from supervision import BoxAnnotator, LabelAnnotator, Color, Detections
 
+# Fungsi untuk encode gambar lokal ke base64
+def get_base64_image(image_path):
+    with open(image_path, "rb") as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+# Fungsi untuk menampilkan logo di kiri atas
+def render_logo():
+    if not os.path.exists("Saraswanti-Logo.png"):
+        st.warning("⚠️ Logo Saraswanti tidak ditemukan.")
+    else:
+        logo_base64 = get_base64_image("Saraswanti-Logo.png")
+        st.markdown(
+            f"""
+            <div style="position: fixed; top: 10px; left: 10px; z-index: 999;">
+                <img src="data:image/png;base64,{logo_base64}" alt="Logo Saraswanti" width="120" />
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+# Set halaman
+st.set_page_config(page_title="Deteksi Buah Sawit", layout="centered")
+
+# Tampilkan logo
+render_logo()
+
+# Load model hanya sekali
 @st.cache_resource
 def load_model():
     return YOLO("best.pt")
 
+# Fungsi prediksi
 def predict_image(model, image):
     image = np.array(image.convert("RGB"))
     results = model(image)
     return results
 
+# Warna sesuai label
 label_to_color = {
     "Masak": Color.RED,
     "Mengkal": Color.YELLOW,
@@ -50,6 +56,7 @@ label_to_color = {
 
 label_annotator = LabelAnnotator()
 
+# Gambar hasil deteksi dan beri label
 def draw_results(image, results):
     img = np.array(image.convert("RGB"))
     class_counts = Counter()
@@ -81,20 +88,24 @@ def draw_results(image, results):
 
     return img, class_counts
 
+# Inisialisasi state
 if "camera_image" not in st.session_state:
     st.session_state["camera_image"] = ""
 
+# Judul Aplikasi
 st.title("📷 Deteksi dan Klasifikasi Kematangan Buah Sawit")
 st.markdown("Pilih metode input gambar:")
 option = st.radio("", ["Upload Gambar", "Gunakan Kamera"])
 image = None
 
+# Input via upload
 if option == "Upload Gambar":
     uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "jpeg", "png"])
     if uploaded_file:
         image = Image.open(uploaded_file)
         st.image(image, caption="Gambar yang diunggah", use_container_width=True)
 
+# Input via kamera
 elif option == "Gunakan Kamera":
     st.markdown("### Kamera Belakang (Environment)")
 
@@ -155,6 +166,7 @@ elif option == "Gunakan Kamera":
         except Exception as e:
             st.error(f"Gagal memproses gambar dari kamera: {e}")
 
+# Deteksi dan visualisasi
 if image:
     with st.spinner("🔍 Memproses gambar..."):
         model = load_model()
