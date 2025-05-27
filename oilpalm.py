@@ -12,7 +12,23 @@ from datetime import datetime
 # --------------------- Konfigurasi Halaman ---------------------
 st.set_page_config(page_title="Deteksi Buah Sawit", layout="centered")
 
-# --------------------- Bar Atas: Foto Profil & Status ---------------------
+# --------------------- CSS Kustom untuk Background Hitam ---------------------
+st.markdown("""
+    <style>
+        body {
+            background-color: #000000;
+            color: white;
+        }
+        .stApp {
+            background-color: #000000;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# --------------------- Logo Saraswanti dari GitHub ---------------------
+st.image("https://raw.githubusercontent.com/username/repo/main/Saraswanti-Logo.png", width=150, caption="Saraswanti Group")  # Ganti URL sesuai lokasi filemu
+
+# --------------------- Bar Atas: Profil & Status ---------------------
 col1, col2 = st.columns([1, 5])
 
 with col1:
@@ -22,7 +38,7 @@ with col2:
     now = datetime.now().strftime("%H:%M:%S")
     st.markdown(
         f"""
-        <div style='text-align: right; font-size:16px; color: green;'>
+        <div style='text-align: right; font-size:16px; color: lime;'>
             🔄 <b>RUNNING...</b> &nbsp;&nbsp; 🕒 {now}
         </div>
         """,
