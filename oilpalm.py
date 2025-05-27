@@ -7,31 +7,48 @@ import base64
 from io import BytesIO
 from ultralytics import YOLO
 from supervision import BoxAnnotator, LabelAnnotator, Color, Detections
+from datetime import datetime
 
-# Konfigurasi halaman
+# --------------------- Konfigurasi Halaman ---------------------
 st.set_page_config(page_title="Deteksi Buah Sawit", layout="centered")
 
-# Load model hanya sekali
+# --------------------- Bar Atas: Foto Profil & Status ---------------------
+col1, col2 = st.columns([1, 5])
+
+with col1:
+    st.image("/mnt/data/74f139dd-1bff-4b06-b5d2-e1f092c7cc4d.png", width=80, caption="Profil")
+
+with col2:
+    now = datetime.now().strftime("%H:%M:%S")
+    st.markdown(
+        f"""
+        <div style='text-align: right; font-size:16px; color: green;'>
+            🔄 <b>RUNNING...</b> &nbsp;&nbsp; 🕒 {now}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+# --------------------- Load Model ---------------------
 @st.cache_resource
 def load_model():
     return YOLO("best.pt")  # Ganti path model sesuai punyamu
 
-# Fungsi prediksi
+# --------------------- Fungsi Prediksi ---------------------
 def predict_image(model, image):
     image = np.array(image.convert("RGB"))
     results = model(image)
     return results
 
-# Warna bounding box sesuai label
+# --------------------- Warna Label ---------------------
 label_to_color = {
     "Masak": Color.RED,
     "Mengkal": Color.YELLOW,
     "Mentah": Color.BLACK
 }
-
 label_annotator = LabelAnnotator()
 
-# Gambar hasil deteksi
+# --------------------- Fungsi Gambar Hasil Deteksi ---------------------
 def draw_results(image, results):
     img = np.array(image.convert("RGB"))
     class_counts = Counter()
@@ -63,28 +80,28 @@ def draw_results(image, results):
 
     return img, class_counts
 
-# Inisialisasi
+# --------------------- Inisialisasi Session ---------------------
 if "camera_image" not in st.session_state:
     st.session_state["camera_image"] = ""
 
-# Judul
+# --------------------- UI Utama ---------------------
 st.title("📷 Deteksi dan Klasifikasi Kematangan Buah Sawit")
 st.markdown("Pilih metode input gambar:")
+
 option = st.radio("", ["Upload Gambar", "Gunakan Kamera"])
 image = None
 
-# Upload dari file
+# --------------------- Upload Gambar ---------------------
 if option == "Upload Gambar":
     uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "jpeg", "png"])
     if uploaded_file:
         image = Image.open(uploaded_file)
         st.image(image, caption="Gambar yang diunggah", use_container_width=True)
 
-# Kamera langsung
+# --------------------- Kamera Langsung ---------------------
 elif option == "Gunakan Kamera":
     st.markdown("### Kamera Belakang (Environment)")
 
-    # HTML kamera + tombol ambil gambar
     camera_html = """
     <div style="text-align:center;">
         <video id="video" autoplay playsinline style="width:100%; border:1px solid gray;"></video>
@@ -127,10 +144,7 @@ elif option == "Gunakan Kamera":
     </script>
     """
 
-    # Tampilkan komponen HTML
     st.components.v1.html(camera_html, height=600)
-
-    # Gunakan text_input sebagai "jembatan"
     base64_img = st.text_input("Gambar dari Kamera (tersembunyi)", type="default", label_visibility="collapsed")
 
     if base64_img.startswith("data:image"):
@@ -144,7 +158,7 @@ elif option == "Gunakan Kamera":
         except Exception as e:
             st.error(f"Gagal memproses gambar dari kamera: {e}")
 
-# Proses deteksi
+# --------------------- Proses Deteksi ---------------------
 if image:
     with st.spinner("🔍 Memproses gambar..."):
         model = load_model()
@@ -155,3 +169,5 @@ if image:
         st.subheader("Jumlah Objek Terdeteksi:")
         for name, count in class_counts.items():
             st.write(f"- **{name}**: {count}")
+
+    st.success("✅ Proses selesai pada " + datetime.now().strftime("%H:%M:%S"))
