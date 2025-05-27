@@ -25,13 +25,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --------------------- Logo Saraswanti dari GitHub ---------------------
-st.image("https://raw.githubusercontent.com/shafiraamanda/ObjectDetectionYOLOV8/main/Saraswanti-Logo.png", width=150, caption="Saraswanti Group")
-
-# --------------------- Bar Atas: Profil & Status ---------------------
+# --------------------- Bar Atas: Logo, Profil & Status ---------------------
 col1, col2 = st.columns([1, 5])
 
 with col1:
+    st.image("https://raw.githubusercontent.com/shafiraamanda/ObjectDetectionYOLOV8/main/Saraswanti-Logo.png", width=120, caption="Saraswanti Group")
     st.image("/mnt/data/74f139dd-1bff-4b06-b5d2-e1f092c7cc4d.png", width=80, caption="Profil")
 
 with col2:
